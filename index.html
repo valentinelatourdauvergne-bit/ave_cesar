@@ -1,305 +1,35 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Césars 2026 — Pronostics & Classement</title>
-  <style>
-    :root{
-      --bg:#0f172a;--panel:#0b1220;--border:#1f2937;
-      --text:#e5e7eb;--muted:#94a3b8;--accent:#22c55e
-    }
-    body{
-      margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-      background:radial-gradient(1200px 800px at 10% 10%,#0b1220,#0f172a);
-      color:var(--text)
-    }
-    .container{max-width:980px;margin:0 auto;padding:24px}
-    a{color:#a7f3d0;text-decoration:none}
-    .card{
-      background:linear-gradient(180deg,#0f172acc,#0b1220cc);
-      border:1px solid var(--border);border-radius:14px;
-      box-shadow:0 8px 24px rgba(0,0,0,.3);padding:18px
-    }
-    ul{list-style:none;padding:0} li{margin:8px 0}
-    select,input[type=text]{
-      width:100%;background:#0b1220;color:var(--text);
-      border:1px solid var(--border);border-radius:10px;padding:10px
-    }
-    label{display:block;margin-bottom:6px;font-weight:600}
-    .grid{display:grid;gap:14px;grid-template-columns:1fr}
-    @media(min-width:700px){.grid{grid-template-columns:1fr 1fr}}
-    .footer{margin-top:18px;color:var(--muted);font-size:12px}
-    .btn{
-      cursor:pointer;border:1px solid var(--border);color:#fff;
-      background:#111827;padding:10px 14px;border-radius:10px;
-      font-weight:600;display:inline-block
-    }
-    .btn-primary{background:linear-gradient(90deg,#22c55e,#16a34a);border:none}
-    table{width:100%;border-collapse:collapse;margin-top:20px}
-    th,td{border:1px solid var(--border);padding:8px;text-align:left}
-    th{background:#1e293b}
-    .nav{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 16px}
-  </style>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Pronostics Césars 2026 — Accueil</title>
+<style>
+ body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;margin:0;background:#0f172a;color:#e5e7eb}
+ .wrap{max-width:860px;margin:0 auto;padding:24px}
+ h1{margin:0 0 10px}
+ .card{background:#0b1220;border:1px solid #1f2937;border-radius:12px;padding:16px}
+ a{color:#a7f3d0;text-decoration:none}
+ ul{list-style:none;padding:0;margin:0}
+ li{margin:8px 0}
+ .muted{color:#94a3b8}
+</style>
 </head>
 <body>
-<div class="container">
-
-<script>
-/* Participants */
-const PARTICIPANTS_BASE = ["fabio","marion","alban","paul","val","lucile","oumeya"];
-
-/* Catégories (version complète) */
-const CATEGORIES = [
-  ["Meilleur film",[ "L’Attachement – Carine Tardieu","Dossier 137 – Dominik Moll","Nouvelle Vague – Richard Linklater","La Petite Dernière – Hafsia Herzi","Un Simple Accident – Jafar Panahi"]],
-  ["Meilleure réalisation",[ "Carine Tardieu – L’Attachement","Dominik Moll – Dossier 137","Stéphane Demoustier – L’Inconnu de la Grande Arche","Richard Linklater – Nouvelle Vague","Hafsia Herzi – La Petite Dernière"]],
-  ["Meilleure actrice",[ "Leïla Bekhti – Ma mère, Dieu et Sylvie Vartan","Valeria Bruni Tedeschi – L’Attachement","Léa Drucker – Dossier 137","Isabelle Huppert – La Femme la plus riche du monde","Mélanie Thierry – La Chambre de Mariana"]],
-  ["Meilleur acteur",[ "Claes Bang – L’Inconnu de la Grande Arche","Bastien Bouillon – Partir un jour","Laurent Lafitte – La Femme la plus riche du monde","Pio Marmaï – L’Attachement","Benjamin Voisin – L’Étranger"]],
-  ["Meilleure actrice dans un second rôle",[ "Jeanne Balibar – Nino","Dominique Blanc – Partir un jour","Marina Foïs – La Femme la plus riche du monde","Ji‑Min Park – La Petite Dernière","Vimala Pons – L’Attachement"]],
-  ["Meilleur acteur dans un second rôle",[ "Swann Arlaud – L’Inconnu de la Grande Arche","Xavier Dolan – L’Inconnu de la Grande Arche","Michel Fau – L’Inconnu de la Grande Arche","Pierre Lottin – L’Étranger","Raphaël Personnaz – La Femme la plus riche du monde"]],
-  ["Meilleur espoir féminin",[ "Manon Clavel – Kika","Suzanne Lindon – La Venue de l’avenir","Nadia Melliti – La Petite Dernière","Camille Rutherford – Jane Austen a gâché ma vie","Anja Verderosa – L’Épreuve du feu"]],
-  ["Meilleur espoir masculin",[ "Idir Azougli – Météors","Sayyid El Alami – La Pampa","Félix Lefebvre – L’Épreuve du feu","Guillaume Marbeck – Nouvelle Vague","Théodore Pellerin – Nino"]],
-  ["Meilleur scénario original",[ "Dominik Moll, Gilles Marchand – Dossier 137","Pauline Loquès – Nino","Holly Gent, Vince Palmo – Nouvelle Vague","Franck Dubosc – Un ours dans le Jura","Jafar Panahi – Un Simple Accident"]],
-  ["Meilleure adaptation",[ "Carine Tardieu – L’Attachement","Stéphane Demoustier – L’Inconnu de la Grande Arche","Hafsia Herzi – La Petite Dernière"]],
-  ["Meilleure musique originale",[ "Arnaud Toulon – ARCO","Olivier Marguerit – Dossier 137","Fatima Al Qadiri – L’Étranger","Alex Beaupain – La Femme la plus riche du monde","Amine Bouhafa – La Petite Dernière"]],
-  ["Meilleur son",[ "Nicolas Becker – ARCO","Romain Cadilhac – Le Chant des Forêts","François Maurel – Dossier 137","Jean Minondo – Nouvelle Vague","Rémi Chanaud – Partir un jour"]],
-  ["Meilleure photographie",[ "Elin Kirschfink – L’Attachement","Patrick Ghiringhelli – Dossier 137","Marine Atlan – L’Engloutie","Manu Dacosse – L’Étranger","David Chambille – Nouvelle Vague"]],
-  ["Meilleur montage",[ "Stan Collet – 13 jours, 13 nuits","Christel Dewynter – L’Attachement","Laurent Rouan – Dossier 137","Catherine Schwartz – Nouvelle Vague","Géraldine Mangenot – La Petite Dernière"]],
-  ["Meilleurs décors",[ "Jean‑Philippe Moreaux – Chien 51","Catherine Cosme – L’Inconnu de la Grande Arche","Riton Dupire‑Clément – Ma mère, Dieu et Sylvie Vartan","Katia Wyszkop – Nouvelle Vague","Marie Cheminal – La Venue de l’avenir"]],
-  ["Meilleurs costumes",[ "Céline Guignard – La Condition","Corinne Bruand – Dracula","Jürgen Doering – La Femme la plus riche du monde","Pascaline Chavanne – Nouvelle Vague","Pierre‑Yves Gayraud – La Venue de l’avenir"]],
-  ["Meilleurs effets visuels",[ "Cédric Fayolle – Chien 51","Rodolphe Chabrier – L’Homme qui rétrécit","Lise Fischer – L’Inconnu de la Grande Arche","Alain Carsoux – Nouvelle Vague"]],
-  ["Meilleur film d’animation",[ "Amélie et la métaphysique des tubes","ARCO – Ugo Bienvenu","La Vie de château – Madeleine‑Perdrillat"]],
-  ["Meilleur film documentaire",[ "À Bicyclette !","Le Chant des Forêts","Le Cinquième Plan de La Jetée","Personne n’y comprend rien","Put Your Soul On Your Hand And Walk"]],
-  ["Meilleur premier film",[ "ARCO","L’Épreuve du feu","Nino","La Pampa","Partir un jour"]],
-  ["Meilleur film étranger",[ "L’Agent secret","Black Dog","Sirāt","Une bataille après l’autre","Valeur sentimentale"]],
-  ["Court métrage animation",[ "Les Belles Cicatrices","Dieu est timide","Fille de l’eau"]],
-  ["Court métrage documentaire",[ "Au bain des dames","Car Wash","Ni Dieu ni Père"]],
-  ["Court métrage fiction",[ "Big Boys Don’t Cry","Deux personnes échangeant de la salive","Mort d’un acteur","Wonderwall"]]
-];
-
-/* Helpers */
-function qs(k){ return new URLSearchParams(location.search).get(k)||''; }
-function keyFor(p){ return `cesars2026_${p}`; }
-function loadVotes(p){ try{return JSON.parse(localStorage.getItem(keyFor(p))||'{}')}catch(e){return{}} }
-function saveVotes(p,obj){ localStorage.setItem(keyFor(p),JSON.stringify(obj)) }
-function loadWinners(){ try{return JSON.parse(localStorage.getItem('cesars2026_winners')||'{}')}catch(e){return{}} }
-function saveWinners(w){ localStorage.setItem('cesars2026_winners',JSON.stringify(w)) }
-
-/* Participants détectés (base + localStorage) */
-function getAllParticipants(){
-  const s=new Set(PARTICIPANTS_BASE);
-  for(let i=0;i<localStorage.length;i++){
-    let k=localStorage.key(i);
-    if(k.startsWith('cesars2026_') && k!=='cesars2026_winners'){
-      s.add(k.replace('cesars2026_',''));
-    }
-  }
-  return [...s].sort();
-}
-
-/* Score selon la règle */
-function computeScore(name,winners){
-  const votes = loadVotes(name);
-  let total = 0;
-  CATEGORIES.forEach(([cat])=>{
-    const win = winners[cat];
-    if(!win) return;
-    const v = votes[cat]||{};
-    if(v.realiste === win){
-      total += 2;
-      if(v.coeur === v.realiste) total += 1;
-    }
-  });
-  return total;
-}
-</script>
-
-<div class="nav">
-  ./🏠 Accueil</a>
-  ?view=winners🏆 Gagnants</a>
-  ?view=ranking📊 Classement</a>
-</div>
-
-<!-- Accueil -->
-<div id="view-list" class="card" style="display:none">
-  <h1>Participants</h1>
-  <ul id="plist"></ul>
-</div>
-
-<!-- Participant -->
-<div id="view-participant" class="card" style="display:none">
-  <h1 id="ptitle"></h1>
-  <div id="cats"></div>
-  <button id="saveBtn" class="btn btn-primary">Enregistrer</button>
-  <button id="clearBtn" class="btn">Effacer</button>
-</div>
-
-<!-- Gagnants -->
-<div id="view-winners" class="card" style="display:none">
-  <h1>🏆 Déclarer les gagnants</h1>
-  <div id="winPanel"></div>
-  <button id="saveWin" class="btn btn-primary">Enregistrer</button>
-  <button id="clearWin" class="btn">Effacer les gagnants</button>
-</div>
-
-<!-- Classement -->
-<div id="view-ranking" class="card" style="display:none">
-  <h1>📊 Classement général</h1>
-  <table>
-    <thead><tr><th>#</th><th>Nom</th><th>Points</th></tr></thead>
-    <tbody id="rankBody"></tbody>
-  </table>
-  <button id="refreshRank" class="btn">↻ Rafraîchir</button>
-</div>
-
-<template id="tpl-cat">
-  <div style="margin-top:12px;border-top:1px dashed var(--border);padding-top:10px">
-    <h3></h3>
-    <div class="grid">
-      <div><label>Cœur</label><select class="coeur"></select></div>
-      <div><label>Réaliste</label><select class="real"></select></div>
-    </div>
+<div class="wrap">
+  <div class="card">
+    <h1>Participants</h1>
+    <p class="muted">Clique un nom pour ouvrir sa page personnelle (sélections + gagnant + score).</p>
+    <ul>
+      <li>• <a href='participants/fabio.html'>fabio</a></li>
+<li>• <a href='participants/marion.html'>marion</a></li>
+<li>• <a href='participants/alban.html'>alban</a></li>
+<li>• <a href='participants/paul.html'>paul</a></li>
+<li>• <a href='participants/val.html'>val</a></li>
+<li>• <a href='participants/lucile.html'>lucile</a></li>
+<li>• <a href='participants/oumeya.html'>oumeya</a></li>
+    </ul>
   </div>
-</template>
-
-<template id="tpl-win">
-  <div style="margin-top:12px;border-top:1px dashed var(--border);padding-top:10px">
-    <h3></h3><select class="winner"></select>
-  </div>
-</template>
-
-<script>
-/* Router */
-const p = qs('participant').toLowerCase();
-const v = qs('view').toLowerCase();
-
-function show(id){
-  ["view-list","view-participant","view-winners","view-ranking"]
-    .forEach(x=>document.getElementById(x).style.display=(x===id?'block':'none'));
-}
-
-/* Participants */
-if(p){
-  show("view-participant");
-  document.getElementById("ptitle").textContent = "Pronostics — " + p;
-
-  const root = document.getElementById("cats");
-  root.innerHTML="";
-  const tpl=document.getElementById("tpl-cat");
-
-  const saved=loadVotes(p);
-
-  CATEGORIES.forEach(([cat,opts])=>{
-    const n=tpl.content.cloneNode(true);
-    n.querySelector("h3").textContent=cat;
-
-    const c=n.querySelector(".coeur");
-    const r=n.querySelector(".real");
-
-    ["— Sélectionner —",...opts].forEach(o=>{
-      const op=document.createElement("option");
-      op.value=o;op.textContent=o;c.appendChild(op.cloneNode(true));
-      r.appendChild(op);
-    });
-
-    if(saved[cat]?.coeur) c.value=saved[cat].coeur;
-    if(saved[cat]?.realiste) r.value=saved[cat].realiste;
-
-    root.appendChild(n);
-  });
-
-  document.getElementById("saveBtn").onclick=()=>{
-    const out={};
-    root.querySelectorAll("h3").forEach(h=>{
-      const cat=h.textContent;
-      const box=h.parentElement;
-      out[cat]={
-        coeur:box.querySelector(".coeur").value,
-        realiste:box.querySelector(".real").value
-      };
-    });
-    saveVotes(p,out);
-    alert("Enregistré !");
-  };
-
-  document.getElementById("clearBtn").onclick=()=>{
-    localStorage.removeItem(keyFor(p));
-    location.reload();
-  };
-
-}
-/* Gagnants */
-else if(v==="winners"){
-  show("view-winners");
-
-  const panel=document.getElementById("winPanel");
-  panel.innerHTML="";
-  const tpl=document.getElementById("tpl-win");
-  const saved=loadWinners();
-
-  CATEGORIES.forEach(([cat,opts])=>{
-    const n=tpl.content.cloneNode(true);
-    n.querySelector("h3").textContent=cat;
-
-    const s=n.querySelector(".winner");
-    ["— Non défini —",...opts].forEach(o=>{
-      const op=document.createElement("option");
-      op.value=o;op.textContent=o;s.appendChild(op);
-    });
-
-    if(saved[cat]) s.value=saved[cat];
-    panel.appendChild(n);
-  });
-
-  saveWin.onclick=()=>{
-    const out={};
-    panel.querySelectorAll("h3").forEach(h=>{
-      const cat=h.textContent;
-      const sel=h.parentElement.querySelector(".winner").value;
-      out[cat]=(sel==="— Non défini —"?"":sel);
-    });
-    saveWinners(out);
-    alert("Gagnants enregistrés !");
-  };
-
-  clearWin.onclick=()=>{
-    localStorage.removeItem("cesars2026_winners");
-    location.reload();
-  };
-
-}
-/* Classement */
-else if(v==="ranking"){
-  show("view-ranking");
-
-  function refresh(){
-    const winners=loadWinners();
-    const all=getAllParticipants();
-    const rows=all.map(name=>({
-      name,
-      pts:computeScore(name,winners)
-    })).sort((a,b)=>b.pts-a.pts||a.name.localeCompare(b.name));
-
-    const tbody=document.getElementById("rankBody");
-    tbody.innerHTML=rows.map((r,i)=>`
-      <tr><td>${i+1}</td><td>${r.name}</td><td>${r.pts}</td></tr>
-    `).join("");
-  }
-
-  refresh();
-  document.getElementById("refreshRank").onclick=refresh;
-}
-/* Accueil */
-else{
-  show("view-list");
-  const ul=document.getElementById("plist");
-  const all=getAllParticipants();
-  ul.innerHTML=all.map(n=>`
-    <li>• <a href="?participant=${n}">${n}</a></li>
-  `).join("");
-}
-</script>
-
 </div>
 </body>
 </html>
