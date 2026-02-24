@@ -36,281 +36,270 @@
       font-weight:600;display:inline-block
     }
     .btn-primary{background:linear-gradient(90deg,#22c55e,#16a34a);border:none}
-    table{width:100%;border-collapse:collapse;margin-top:16px}
+    table{width:100%;border-collapse:collapse;margin-top:20px}
     th,td{border:1px solid var(--border);padding:8px;text-align:left}
     th{background:#1e293b}
+    .nav{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 16px}
   </style>
 </head>
 <body>
 <div class="container">
 
 <script>
-/* === Paramètres === */
-const PARTICIPANTS = ["fabio","marion","alban","paul","val","lucile","oumeya"];
+/* Participants */
+const PARTICIPANTS_BASE = ["fabio","marion","alban","paul","val","lucile","oumeya"];
 
-/* === Catégories & nommés 2026 (liste complète) === */
+/* Catégories (version complète) */
 const CATEGORIES = [
-  ["Meilleur film", [
-    "L’Attachement – Carine Tardieu",
-    "Dossier 137 – Dominik Moll",
-    "Nouvelle Vague – Richard Linklater",
-    "La Petite Dernière – Hafsia Herzi",
-    "Un Simple Accident – Jafar Panahi"
-  ]],
-  ["Meilleure réalisation", [
-    "Carine Tardieu – L’Attachement",
-    "Dominik Moll – Dossier 137",
-    "Stéphane Demoustier – L’Inconnu de la Grande Arche",
-    "Richard Linklater – Nouvelle Vague",
-    "Hafsia Herzi – La Petite Dernière"
-  ]],
-  ["Meilleure actrice", [
-    "Leïla Bekhti – Ma mère, Dieu et Sylvie Vartan",
-    "Valeria Bruni Tedeschi – L’Attachement",
-    "Léa Drucker – Dossier 137",
-    "Isabelle Huppert – La Femme la plus riche du monde",
-    "Mélanie Thierry – La Chambre de Mariana"
-  ]],
-  ["Meilleur acteur", [
-    "Claes Bang – L’Inconnu de la Grande Arche",
-    "Bastien Bouillon – Partir un jour",
-    "Laurent Lafitte – La Femme la plus riche du monde",
-    "Pio Marmaï – L’Attachement",
-    "Benjamin Voisin – L’Étranger"
-  ]],
-  ["Meilleure actrice dans un second rôle", [
-    "Jeanne Balibar – Nino",
-    "Dominique Blanc – Partir un jour",
-    "Marina Foïs – La Femme la plus riche du monde",
-    "Ji‑Min Park – La Petite Dernière",
-    "Vimala Pons – L’Attachement"
-  ]],
-  ["Meilleur acteur dans un second rôle", [
-    "Swann Arlaud – L’Inconnu de la Grande Arche",
-    "Xavier Dolan – L’Inconnu de la Grande Arche",
-    "Michel Fau – L’Inconnu de la Grande Arche",
-    "Pierre Lottin – L’Étranger",
-    "Raphaël Personnaz – La Femme la plus riche du monde"
-  ]],
-  ["Meilleur espoir féminin", [
-    "Manon Clavel – Kika",
-    "Suzanne Lindon – La Venue de l’avenir",
-    "Nadia Melliti – La Petite Dernière",
-    "Camille Rutherford – Jane Austen a gâché ma vie",
-    "Anja Verderosa – L’Épreuve du feu"
-  ]],
-  ["Meilleur espoir masculin", [
-    "Idir Azougli – Météors",
-    "Sayyid El Alami – La Pampa",
-    "Félix Lefebvre – L’Épreuve du feu",
-    "Guillaume Marbeck – Nouvelle Vague",
-    "Théodore Pellerin – Nino"
-  ]],
-  ["Meilleur scénario original", [
-    "Dominik Moll, Gilles Marchand – Dossier 137",
-    "Pauline Loquès – Nino",
-    "Holly Gent, Vince Palmo, Michèle Halberstadt, Laetitia Masson – Nouvelle Vague",
-    "Franck Dubosc, Sarah Kaminsky – Un ours dans le Jura",
-    "Jafar Panahi – Un Simple Accident"
-  ]],
-  ["Meilleure adaptation", [
-    "Carine Tardieu, Raphaële Moussafir, Agnès Feuvre – L’Attachement",
-    "Stéphane Demoustier – L’Inconnu de la Grande Arche",
-    "Hafsia Herzi – La Petite Dernière"
-  ]],
-  ["Meilleure musique originale", [
-    "Arnaud Toulon – ARCO",
-    "Olivier Marguerit – Dossier 137",
-    "Fatima Al Qadiri – L’Étranger",
-    "Alex Beaupain – La Femme la plus riche du monde",
-    "Amine Bouhafa – La Petite Dernière"
-  ]],
-  ["Meilleur son", [
-    "Nicolas Becker, Andrea Ferrara, Jon Goc, Damien Lazzerini – ARCO",
-    "Romain Cadilhac, Marc Namblard, Olivier Touche, Olivier Goinard – Le Chant des Forêts",
-    "François Maurel, Rym Debbarh‑Mounir, Nathalie Vidal – Dossier 137",
-    "Jean Minondo, Serge Rouquairol, Christophe Vingtrinier – Nouvelle Vague",
-    "Rémi Chanaud, Jeanne Delplancq, Fanny Martin, Niels Barletta – Partir un jour"
-  ]],
-  ["Meilleure photographie", [
-    "Elin Kirschfink – L’Attachement",
-    "Patrick Ghiringhelli – Dossier 137",
-    "Marine Atlan – L’Engloutie",
-    "Manu Dacosse – L’Étranger",
-    "David Chambille – Nouvelle Vague"
-  ]],
-  ["Meilleur montage", [
-    "Stan Collet – 13 jours, 13 nuits",
-    "Christel Dewynter – L’Attachement",
-    "Laurent Rouan – Dossier 137",
-    "Catherine Schwartz – Nouvelle Vague",
-    "Géraldine Mangenot – La Petite Dernière"
-  ]],
-  ["Meilleurs décors", [
-    "Jean‑Philippe Moreaux – Chien 51",
-    "Catherine Cosme – L’Inconnu de la Grande Arche",
-    "Riton Dupire‑Clément – Ma mère, Dieu et Sylvie Vartan",
-    "Katia Wyszkop – Nouvelle Vague",
-    "Marie Cheminal – La Venue de l’avenir"
-  ]],
-  ["Meilleurs costumes", [
-    "Céline Guignard – La Condition",
-    "Corinne Bruand – Dracula",
-    "Jürgen Doering – La Femme la plus riche du monde",
-    "Pascaline Chavanne – Nouvelle Vague",
-    "Pierre‑Yves Gayraud – La Venue de l’avenir"
-  ]],
-  ["Meilleurs effets visuels", [
-    "Cédric Fayolle – Chien 51",
-    "Rodolphe Chabrier, Benoît de Longlée – L’Homme qui rétrécit",
-    "Lise Fischer – L’Inconnu de la Grande Arche",
-    "Alain Carsoux – Nouvelle Vague"
-  ]],
-  ["Meilleur film d’animation (long métrage)", [
-    "Amélie et la métaphysique des tubes – Maïlys Vallade, Liane‑Cho Han",
-    "ARCO – Ugo Bienvenu",
-    "La Vie de château, mon enfance à Versailles – Clémence Madeleine‑Perdrillat, Nathaniel H’Limi"
-  ]],
-  ["Meilleur film documentaire", [
-    "À Bicyclette ! – Mathias Mlekuz",
-    "Le Chant des Forêts – Vincent Munier",
-    "Le Cinquième Plan de La Jetée – Dominique Cabrera",
-    "Personne n’y comprend rien – Yannick Kergoat",
-    "Put Your Soul On Your Hand And Walk – Sepideh Farsi"
-  ]],
-  ["Meilleur premier film", [
-    "ARCO – Ugo Bienvenu",
-    "L’Épreuve du feu – Aurélien Peyre",
-    "Nino – Pauline Loquès",
-    "La Pampa – Antoine Chevrollier",
-    "Partir un jour – Amélie Bonnin"
-  ]],
-  ["Meilleur film étranger", [
-    "L’Agent secret – Kleber Mendonça Filho",
-    "Black Dog – Guan Hu",
-    "Sirāt – Oliver Laxe",
-    "Une bataille après l’autre – Paul Thomas Anderson",
-    "Valeur sentimentale – Joachim Trier"
-  ]],
-  ["Meilleur court métrage d’animation", [
-    "Les Belles Cicatrices – Raphaël Jouzeau",
-    "Dieu est timide – Jocelyn Charles",
-    "Fille de l’eau – Sandra Desmazières"
-  ]],
-  ["Meilleur court métrage documentaire", [
-    "Au bain des dames – Margaux Fournier",
-    "Car Wash – Laïs Decaster",
-    "Ni Dieu ni Père – Paul Kermarec"
-  ]],
-  ["Meilleur court métrage de fiction", [
-    "Big Boys Don’t Cry – Arnaud Delmarle",
-    "Deux personnes échangeant de la salive – Natalie Musteata, Alexandre Singh",
-    "Mort d’un acteur – Ambroise Rateau",
-    "Wonderwall – Róisín Burns"
-  ]]
+  ["Meilleur film",[ "L’Attachement – Carine Tardieu","Dossier 137 – Dominik Moll","Nouvelle Vague – Richard Linklater","La Petite Dernière – Hafsia Herzi","Un Simple Accident – Jafar Panahi"]],
+  ["Meilleure réalisation",[ "Carine Tardieu – L’Attachement","Dominik Moll – Dossier 137","Stéphane Demoustier – L’Inconnu de la Grande Arche","Richard Linklater – Nouvelle Vague","Hafsia Herzi – La Petite Dernière"]],
+  ["Meilleure actrice",[ "Leïla Bekhti – Ma mère, Dieu et Sylvie Vartan","Valeria Bruni Tedeschi – L’Attachement","Léa Drucker – Dossier 137","Isabelle Huppert – La Femme la plus riche du monde","Mélanie Thierry – La Chambre de Mariana"]],
+  ["Meilleur acteur",[ "Claes Bang – L’Inconnu de la Grande Arche","Bastien Bouillon – Partir un jour","Laurent Lafitte – La Femme la plus riche du monde","Pio Marmaï – L’Attachement","Benjamin Voisin – L’Étranger"]],
+  ["Meilleure actrice dans un second rôle",[ "Jeanne Balibar – Nino","Dominique Blanc – Partir un jour","Marina Foïs – La Femme la plus riche du monde","Ji‑Min Park – La Petite Dernière","Vimala Pons – L’Attachement"]],
+  ["Meilleur acteur dans un second rôle",[ "Swann Arlaud – L’Inconnu de la Grande Arche","Xavier Dolan – L’Inconnu de la Grande Arche","Michel Fau – L’Inconnu de la Grande Arche","Pierre Lottin – L’Étranger","Raphaël Personnaz – La Femme la plus riche du monde"]],
+  ["Meilleur espoir féminin",[ "Manon Clavel – Kika","Suzanne Lindon – La Venue de l’avenir","Nadia Melliti – La Petite Dernière","Camille Rutherford – Jane Austen a gâché ma vie","Anja Verderosa – L’Épreuve du feu"]],
+  ["Meilleur espoir masculin",[ "Idir Azougli – Météors","Sayyid El Alami – La Pampa","Félix Lefebvre – L’Épreuve du feu","Guillaume Marbeck – Nouvelle Vague","Théodore Pellerin – Nino"]],
+  ["Meilleur scénario original",[ "Dominik Moll, Gilles Marchand – Dossier 137","Pauline Loquès – Nino","Holly Gent, Vince Palmo – Nouvelle Vague","Franck Dubosc – Un ours dans le Jura","Jafar Panahi – Un Simple Accident"]],
+  ["Meilleure adaptation",[ "Carine Tardieu – L’Attachement","Stéphane Demoustier – L’Inconnu de la Grande Arche","Hafsia Herzi – La Petite Dernière"]],
+  ["Meilleure musique originale",[ "Arnaud Toulon – ARCO","Olivier Marguerit – Dossier 137","Fatima Al Qadiri – L’Étranger","Alex Beaupain – La Femme la plus riche du monde","Amine Bouhafa – La Petite Dernière"]],
+  ["Meilleur son",[ "Nicolas Becker – ARCO","Romain Cadilhac – Le Chant des Forêts","François Maurel – Dossier 137","Jean Minondo – Nouvelle Vague","Rémi Chanaud – Partir un jour"]],
+  ["Meilleure photographie",[ "Elin Kirschfink – L’Attachement","Patrick Ghiringhelli – Dossier 137","Marine Atlan – L’Engloutie","Manu Dacosse – L’Étranger","David Chambille – Nouvelle Vague"]],
+  ["Meilleur montage",[ "Stan Collet – 13 jours, 13 nuits","Christel Dewynter – L’Attachement","Laurent Rouan – Dossier 137","Catherine Schwartz – Nouvelle Vague","Géraldine Mangenot – La Petite Dernière"]],
+  ["Meilleurs décors",[ "Jean‑Philippe Moreaux – Chien 51","Catherine Cosme – L’Inconnu de la Grande Arche","Riton Dupire‑Clément – Ma mère, Dieu et Sylvie Vartan","Katia Wyszkop – Nouvelle Vague","Marie Cheminal – La Venue de l’avenir"]],
+  ["Meilleurs costumes",[ "Céline Guignard – La Condition","Corinne Bruand – Dracula","Jürgen Doering – La Femme la plus riche du monde","Pascaline Chavanne – Nouvelle Vague","Pierre‑Yves Gayraud – La Venue de l’avenir"]],
+  ["Meilleurs effets visuels",[ "Cédric Fayolle – Chien 51","Rodolphe Chabrier – L’Homme qui rétrécit","Lise Fischer – L’Inconnu de la Grande Arche","Alain Carsoux – Nouvelle Vague"]],
+  ["Meilleur film d’animation",[ "Amélie et la métaphysique des tubes","ARCO – Ugo Bienvenu","La Vie de château – Madeleine‑Perdrillat"]],
+  ["Meilleur film documentaire",[ "À Bicyclette !","Le Chant des Forêts","Le Cinquième Plan de La Jetée","Personne n’y comprend rien","Put Your Soul On Your Hand And Walk"]],
+  ["Meilleur premier film",[ "ARCO","L’Épreuve du feu","Nino","La Pampa","Partir un jour"]],
+  ["Meilleur film étranger",[ "L’Agent secret","Black Dog","Sirāt","Une bataille après l’autre","Valeur sentimentale"]],
+  ["Court métrage animation",[ "Les Belles Cicatrices","Dieu est timide","Fille de l’eau"]],
+  ["Court métrage documentaire",[ "Au bain des dames","Car Wash","Ni Dieu ni Père"]],
+  ["Court métrage fiction",[ "Big Boys Don’t Cry","Deux personnes échangeant de la salive","Mort d’un acteur","Wonderwall"]]
 ];
 
-/* === Utilitaires URL/Storage === */
-const qs = k => new URLSearchParams(location.search).get(k)||"";
-const view = (qs('view')||'').toLowerCase();  // '', 'gagnants', 'classement'
-const p = (qs('participant')||'').trim().toLowerCase();
-const WINNERS_KEY = 'cesars2026_gagnants';
-const storeKey = name => `cesars2026_${name}`;
+/* Helpers */
+function qs(k){ return new URLSearchParams(location.search).get(k)||''; }
+function keyFor(p){ return `cesars2026_${p}`; }
+function loadVotes(p){ try{return JSON.parse(localStorage.getItem(keyFor(p))||'{}')}catch(e){return{}} }
+function saveVotes(p,obj){ localStorage.setItem(keyFor(p),JSON.stringify(obj)) }
+function loadWinners(){ try{return JSON.parse(localStorage.getItem('cesars2026_winners')||'{}')}catch(e){return{}} }
+function saveWinners(w){ localStorage.setItem('cesars2026_winners',JSON.stringify(w)) }
 
-/* Lire/écrire gagnants (objet: {cat -> string}) */
-const loadWinners = () => JSON.parse(localStorage.getItem(WINNERS_KEY)||'{}');
-const saveWinners = obj => localStorage.setItem(WINNERS_KEY, JSON.stringify(obj));
+/* Participants détectés (base + localStorage) */
+function getAllParticipants(){
+  const s=new Set(PARTICIPANTS_BASE);
+  for(let i=0;i<localStorage.length;i++){
+    let k=localStorage.key(i);
+    if(k.startsWith('cesars2026_') && k!=='cesars2026_winners'){
+      s.add(k.replace('cesars2026_',''));
+    }
+  }
+  return [...s].sort();
+}
 
-/* Lire les pronostics d'un participant (objet: {cat: {coeur, realiste}}) */
-const loadVotes = name => JSON.parse(localStorage.getItem(storeKey(name))||'{}');
-
-/* Calcul des points selon règle :
-   - 2 pts si réaliste = gagnant
-   - +1 pt si coeur = réaliste (bonus), donc max 3 */
-function scoreParticipant(name, winners){
+/* Score selon la règle */
+function computeScore(name,winners){
   const votes = loadVotes(name);
   let total = 0;
   CATEGORIES.forEach(([cat])=>{
+    const win = winners[cat];
+    if(!win) return;
     const v = votes[cat]||{};
-    if (v.realiste && winners[cat] && v.realiste === winners[cat]) {
+    if(v.realiste === win){
       total += 2;
-      if (v.coeur && v.coeur === v.realiste) total += 1;
+      if(v.coeur === v.realiste) total += 1;
     }
   });
   return total;
 }
 </script>
 
-<!-- ====== VUE : Liste participants ====== -->
+<div class="nav">
+  ./🏠 Accueil</a>
+  ?view=winners🏆 Gagnants</a>
+  ?view=ranking📊 Classement</a>
+</div>
+
+<!-- Accueil -->
 <div id="view-list" class="card" style="display:none">
-  <h1 style="margin:0 0 8px">Participants</h1>
-  <p>Choisir un nom pour ouvrir sa page de pronostics :</p>
+  <h1>Participants</h1>
   <ul id="plist"></ul>
-
-  <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
-    <a class="btn" href="./?view=gagnants">🏆 Déclarer les gagnants</a>
-    <a class="btn btn-primary" href="./?view=classement">📊 Classement général</a>
-  </div>
-
-  <div class="footer">
-    Astuce : tu peux aussi ouvrir directement une fiche avec <code>?participant=prenom</code>
-    (ex : <code>?participant=val</code>).
-  </div>
 </div>
 
-<!-- ====== VUE : Fiche participant ====== -->
+<!-- Participant -->
 <div id="view-participant" class="card" style="display:none">
-  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-    <h1 id="ptitle" style="margin:0">Pronostics</h1>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <a class="btn" href="./">← Liste</a>
-      <a class="btn" href="./?view=classement">📊 Classement</a>
-      <a class="btn" href="./?view=gagnants">🏆 Gagnants</a>
-    </div>
-  </div>
-  <p id="psub" style="color:var(--muted);margin-top:6px"></p>
-
+  <h1 id="ptitle"></h1>
   <div id="cats"></div>
-  <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
-    <button id="saveBtn" class="btn btn-primary">💾 Enregistrer</button>
-    <button id="clearBtn" class="btn">🗑️ Effacer mes choix</button>
-    <button id="exportBtn" class="btn">⬇️ Exporter (JSON)</button>
-  </div>
+  <button id="saveBtn" class="btn btn-primary">Enregistrer</button>
+  <button id="clearBtn" class="btn">Effacer</button>
 </div>
 
-<!-- ====== VUE : Déclarer les gagnants ====== -->
+<!-- Gagnants -->
 <div id="view-winners" class="card" style="display:none">
-  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-    <h1 style="margin:0">🏆 Déclarer les gagnants</h1>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <a class="btn" href="./">← Liste</a>
-      <a class="btn" href="./?view=classement">📊 Classement</a>
-    </div>
-  </div>
-  <p class="footer">Tout le monde peut éditer ces sélections (stockées localement dans ce navigateur).</p>
-  <div id="winnersPanel"></div>
-  <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
-    <button id="saveWinnersBtn" class="btn btn-primary">💾 Enregistrer les gagnants</button>
-    <button id="clearWinnersBtn" class="btn">🗑️ Effacer / Réinitialiser</button>
-  </div>
+  <h1>🏆 Déclarer les gagnants</h1>
+  <div id="winPanel"></div>
+  <button id="saveWin" class="btn btn-primary">Enregistrer</button>
+  <button id="clearWin" class="btn">Effacer les gagnants</button>
 </div>
 
-<!-- ====== VUE : Classement général ====== -->
+<!-- Classement -->
 <div id="view-ranking" class="card" style="display:none">
-  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-    <h1 style="margin:0">📊 Classement général</h1>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <a class="btn" href="./">← Liste</a>
-      <a class="btn" href="./?view=gagnants">🏆 Gagnants</a>
-    </div>
-  </div>
-  <p class="footer">Classement calculé localement à partir des choix enregistrés dans ce navigateur.</p>
-  <div id="rankingPanel"></div>
-  <div style="margin-top:10px">
-    <button id="recalcBtn" class="btn">↻ Recalculer</button>
-  </div>
+  <h1>📊 Classement général</h1>
+  <table>
+    <thead><tr><th>#</th><th>Nom</th><th>Points</th></tr></thead>
+    <tbody id="rankBody"></tbody>
+  </table>
+  <button id="refreshRank" class="btn">↻ Rafraîchir</button>
 </div>
 
-<!-- ====== TEMPLATES ====== -->
-<template id="cat-template">
-  <div style="border-top:1px dashed var(--border);padding-top:12px;margin-top:10px">
+<template id="tpl-cat">
+  <div style="margin-top:12px;border-top:1px dashed var(--border);padding-top:10px">
+    <h3></h3>
+    <div class="grid">
+      <div><label>Cœur</label><select class="coeur"></select></div>
+      <div><label>Réaliste</label><select class="real"></select></div>
+    </div>
+  </div>
+</template>
+
+<template id="tpl-win">
+  <div style="margin-top:12px;border-top:1px dashed var(--border);padding-top:10px">
+    <h3></h3><select class="winner"></select>
+  </div>
+</template>
+
+<script>
+/* Router */
+const p = qs('participant').toLowerCase();
+const v = qs('view').toLowerCase();
+
+function show(id){
+  ["view-list","view-participant","view-winners","view-ranking"]
+    .forEach(x=>document.getElementById(x).style.display=(x===id?'block':'none'));
+}
+
+/* Participants */
+if(p){
+  show("view-participant");
+  document.getElementById("ptitle").textContent = "Pronostics — " + p;
+
+  const root = document.getElementById("cats");
+  root.innerHTML="";
+  const tpl=document.getElementById("tpl-cat");
+
+  const saved=loadVotes(p);
+
+  CATEGORIES.forEach(([cat,opts])=>{
+    const n=tpl.content.cloneNode(true);
+    n.querySelector("h3").textContent=cat;
+
+    const c=n.querySelector(".coeur");
+    const r=n.querySelector(".real");
+
+    ["— Sélectionner —",...opts].forEach(o=>{
+      const op=document.createElement("option");
+      op.value=o;op.textContent=o;c.appendChild(op.cloneNode(true));
+      r.appendChild(op);
+    });
+
+    if(saved[cat]?.coeur) c.value=saved[cat].coeur;
+    if(saved[cat]?.realiste) r.value=saved[cat].realiste;
+
+    root.appendChild(n);
+  });
+
+  document.getElementById("saveBtn").onclick=()=>{
+    const out={};
+    root.querySelectorAll("h3").forEach(h=>{
+      const cat=h.textContent;
+      const box=h.parentElement;
+      out[cat]={
+        coeur:box.querySelector(".coeur").value,
+        realiste:box.querySelector(".real").value
+      };
+    });
+    saveVotes(p,out);
+    alert("Enregistré !");
+  };
+
+  document.getElementById("clearBtn").onclick=()=>{
+    localStorage.removeItem(keyFor(p));
+    location.reload();
+  };
+
+}
+/* Gagnants */
+else if(v==="winners"){
+  show("view-winners");
+
+  const panel=document.getElementById("winPanel");
+  panel.innerHTML="";
+  const tpl=document.getElementById("tpl-win");
+  const saved=loadWinners();
+
+  CATEGORIES.forEach(([cat,opts])=>{
+    const n=tpl.content.cloneNode(true);
+    n.querySelector("h3").textContent=cat;
+
+    const s=n.querySelector(".winner");
+    ["— Non défini —",...opts].forEach(o=>{
+      const op=document.createElement("option");
+      op.value=o;op.textContent=o;s.appendChild(op);
+    });
+
+    if(saved[cat]) s.value=saved[cat];
+    panel.appendChild(n);
+  });
+
+  saveWin.onclick=()=>{
+    const out={};
+    panel.querySelectorAll("h3").forEach(h=>{
+      const cat=h.textContent;
+      const sel=h.parentElement.querySelector(".winner").value;
+      out[cat]=(sel==="— Non défini —"?"":sel);
+    });
+    saveWinners(out);
+    alert("Gagnants enregistrés !");
+  };
+
+  clearWin.onclick=()=>{
+    localStorage.removeItem("cesars2026_winners");
+    location.reload();
+  };
+
+}
+/* Classement */
+else if(v==="ranking"){
+  show("view-ranking");
+
+  function refresh(){
+    const winners=loadWinners();
+    const all=getAllParticipants();
+    const rows=all.map(name=>({
+      name,
+      pts:computeScore(name,winners)
+    })).sort((a,b)=>b.pts-a.pts||a.name.localeCompare(b.name));
+
+    const tbody=document.getElementById("rankBody");
+    tbody.innerHTML=rows.map((r,i)=>`
+      <tr><td>${i+1}</td><td>${r.name}</td><td>${r.pts}</td></tr>
+    `).join("");
+  }
+
+  refresh();
+  document.getElementById("refreshRank").onclick=refresh;
+}
+/* Accueil */
+else{
+  show("view-list");
+  const ul=document.getElementById("plist");
+  const all=getAllParticipants();
+  ul.innerHTML=all.map(n=>`
+    <li>• <a href="?participant=${n}">${n}</a></li>
+  `).join("");
+}
+</script>
+
+</div>
+</body>
+</html>
