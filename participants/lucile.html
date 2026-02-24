@@ -5,60 +5,61 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Pronostics — lucile</title>
 <style>
- body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;margin:0;background:#0f172a;color:#e5e7eb}
- .wrap{max-width:860px;margin:0 auto;padding:24px}
- .top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
- a{color:#a7f3d0;text-decoration:none}
- .card{background:#0b1220;border:1px solid #1f2937;border-radius:12px;padding:16px}
- .cat{border-top:1px dashed #1f2937;padding-top:12px;margin-top:8px}
- label{display:block;margin-bottom:6px;font-weight:600}
- select{width:100%;background:#0b1220;color:#e5e7eb;border:1px solid #1f2937;border-radius:10px;padding:10px}
- .grid{display:grid;gap:10px;grid-template-columns:1fr}
- @media(min-width:700px){.grid{grid-template-columns:1fr 1fr 1fr}}
- .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
- .btn{cursor:pointer;border:1px solid #1f2937;background:#111827;color:#fff;padding:10px 14px;border-radius:10px;font-weight:600}
- .primary{background:linear-gradient(90deg,#22c55e,#16a34a);border:none}
- .total{font-size:26px;font-weight:700;margin-top:14px;text-align:center}
- .pts{color:#a7f3d0;font-size:12px}
+ body{{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;margin:0;background:#0f172a;color:#e5e7eb}}
+ .wrap{{max-width:860px;margin:0 auto;padding:24px}}
+ .top{{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}}
+ a{{color:#a7f3d0;text-decoration:none}}
+ .card{{background:#0b1220;border:1px solid #1f2937;border-radius:12px;padding:16px}}
+ .cat{{border-top:1px dashed #1f2937;padding-top:12px;margin-top:8px}}
+ label{{display:block;margin-bottom:6px;font-weight:600}}
+ select{{width:100%;background:#0b1220;color:#e5e7eb;border:1px solid #1f2937;border-radius:10px;padding:12px;font-size:16px}}
+ .grid{{display:grid;gap:10px;grid-template-columns:1fr}}
+ @media(min-width:560px){{.grid{{grid-template-columns:1fr 1fr 1fr}}}}
+ .btnrow{{display:grid;gap:8px;grid-template-columns:1fr}}
+ @media(min-width:420px){{.btnrow{{grid-template-columns:1fr 1fr}}}}
+ .btn{{cursor:pointer;border:1px solid #1f2937;background:#111827;color:#fff;padding:12px;border-radius:10px;font-weight:600;font-size:16px}}
+ .save{{background:linear-gradient(90deg,#22c55e,#16a34a);border:none}}
+ .erase{{background:#7f1d1d}}
+ .total{{font-size:26px;font-weight:700;margin-top:14px;text-align:center}}
+ .pts{{color:#a7f3d0;font-size:12px;margin-top:6px;text-align:right}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="top">
-    <h1 style="margin:0">Pronostics — lucile</h1>
-    <div><a href="../index.html">← Accueil</a></div>
+<div class='wrap'>
+  <div class='top'>
+    <h1 style='margin:0'>Pronostics — lucile</h1>
+    <div><a href='../index.html'>← Accueil</a></div>
   </div>
 
-  <div class="card">
-    <p class="pts">Règle : 2 pts si <em>Réaliste</em> = <em>Gagnant</em>, +1 pt si <em>Cœur</em> = <em>Réaliste</em> (max 3/catégorie).</p>
-    <div id="cats"></div>
-    <div class="btns">
-      <button id="saveBtn" class="btn primary">💾 Enregistrer</button>
-      <button id="clearBtn" class="btn">🗑️ Effacer</button>
-      <button id="printBtn" class="btn">🖨️ Imprimer</button>
-    </div>
-    <div id="total" class="total">Total : 0 pts</div>
+  <div class='card'>
+    <p class='pts' style='text-align:left'>Règle : 3 pts si <em>Cœur = Gagnant</em> ; 2 pts si <em>Réaliste = Gagnant</em> (y compris si <em>Cœur = Réaliste = Gagnant</em>) ; 0 pt sinon.</p>
+    <div id='cats'></div>
+    <div id='total' class='total'>Total : 0 pts</div>
   </div>
 </div>
 
-<template id="tpl">
-  <div class="cat">
-    <h3 style="margin:0 0 6px"></h3>
-    <div class="grid">
+<template id='tpl'>
+  <div class='cat'>
+    <h3 style='margin:0 0 6px'></h3>
+    <div class='grid'>
       <div>
         <label>Choix du cœur</label>
-        <select class="coeur"></select>
+        <select class='coeur'></select>
       </div>
       <div>
         <label>Choix réaliste</label>
-        <select class="real"></select>
+        <select class='real'></select>
       </div>
       <div>
-        <label>Gagnant (tel qu’annoncé)</label>
-        <select class="win"></select>
+        <label>Gagnant</label>
+        <select class='win'></select>
       </div>
     </div>
-    <div class="pts" data-pts>0 pt</div>
+    <div class='btnrow'>
+      <button class='btn save'>💾 Sauvegarder cette catégorie</button>
+      <button class='btn erase'>🗑️ Effacer cette catégorie</button>
+    </div>
+    <div class='pts' data-pts>0 pt</div>
   </div>
 </template>
 
@@ -67,77 +68,99 @@ const NAME = "lucile";
 const CATS = [["Meilleur film", ["L’Attachement – Carine Tardieu", "Dossier 137 – Dominik Moll", "Nouvelle Vague – Richard Linklater", "La Petite Dernière – Hafsia Herzi", "Un Simple Accident – Jafar Panahi"]], ["Meilleure réalisation", ["Carine Tardieu – L’Attachement", "Dominik Moll – Dossier 137", "Stéphane Demoustier – L’Inconnu de la Grande Arche", "Richard Linklater – Nouvelle Vague", "Hafsia Herzi – La Petite Dernière"]], ["Meilleure actrice", ["Leïla Bekhti – Ma mère, Dieu et Sylvie Vartan", "Valeria Bruni Tedeschi – L’Attachement", "Léa Drucker – Dossier 137", "Isabelle Huppert – La Femme la plus riche du monde", "Mélanie Thierry – La Chambre de Mariana"]], ["Meilleur acteur", ["Claes Bang – L’Inconnu de la Grande Arche", "Bastien Bouillon – Partir un jour", "Laurent Lafitte – La Femme la plus riche du monde", "Pio Marmaï – L’Attachement", "Benjamin Voisin – L’Étranger"]], ["Meilleure actrice dans un second rôle", ["Jeanne Balibar – Nino", "Dominique Blanc – Partir un jour", "Marina Foïs – La Femme la plus riche du monde", "Ji‑Min Park – La Petite Dernière", "Vimala Pons – L’Attachement"]], ["Meilleur acteur dans un second rôle", ["Swann Arlaud – L’Inconnu de la Grande Arche", "Xavier Dolan – L’Inconnu de la Grande Arche", "Michel Fau – L’Inconnu de la Grande Arche", "Pierre Lottin – L’Étranger", "Raphaël Personnaz – La Femme la plus riche du monde"]], ["Meilleur espoir féminin", ["Manon Clavel – Kika", "Suzanne Lindon – La Venue de l’avenir", "Nadia Melliti – La Petite Dernière", "Camille Rutherford – Jane Austen a gâché ma vie", "Anja Verderosa – L’Épreuve du feu"]], ["Meilleur espoir masculin", ["Idir Azougli – Météors", "Sayyid El Alami – La Pampa", "Félix Lefebvre – L’Épreuve du feu", "Guillaume Marbeck – Nouvelle Vague", "Théodore Pellerin – Nino"]], ["Meilleur scénario original", ["Dominik Moll, Gilles Marchand – Dossier 137", "Pauline Loquès – Nino", "Holly Gent, Vince Palmo, Michèle Halberstadt, Laetitia Masson – Nouvelle Vague", "Franck Dubosc, Sarah Kaminsky – Un ours dans le Jura", "Jafar Panahi – Un Simple Accident"]], ["Meilleure adaptation", ["Carine Tardieu, Raphaële Moussafir, Agnès Feuvre – L’Attachement", "Stéphane Demoustier – L’Inconnu de la Grande Arche", "Hafsia Herzi – La Petite Dernière"]], ["Meilleure musique originale", ["Arnaud Toulon – ARCO", "Olivier Marguerit – Dossier 137", "Fatima Al Qadiri – L’Étranger", "Alex Beaupain – La Femme la plus riche du monde", "Amine Bouhafa – La Petite Dernière"]], ["Meilleur son", ["Nicolas Becker, Andrea Ferrara, Jon Goc, Damien Lazzerini – ARCO", "Romain Cadilhac, Marc Namblard, Olivier Touche, Olivier Goinard – Le Chant des Forêts", "François Maurel, Rym Debbarh‑Mounir, Nathalie Vidal – Dossier 137", "Jean Minondo, Serge Rouquairol, Christophe Vingtrinier – Nouvelle Vague", "Rémi Chanaud, Jeanne Delplancq, Fanny Martin, Niels Barletta – Partir un jour"]], ["Meilleure photographie", ["Elin Kirschfink – L’Attachement", "Patrick Ghiringhelli – Dossier 137", "Marine Atlan – L’Engloutie", "Manu Dacosse – L’Étranger", "David Chambille – Nouvelle Vague"]], ["Meilleur montage", ["Stan Collet – 13 jours, 13 nuits", "Christel Dewynter – L’Attachement", "Laurent Rouan – Dossier 137", "Catherine Schwartz – Nouvelle Vague", "Géraldine Mangenot – La Petite Dernière"]], ["Meilleurs décors", ["Jean‑Philippe Moreaux – Chien 51", "Catherine Cosme – L’Inconnu de la Grande Arche", "Riton Dupire‑Clément – Ma mère, Dieu et Sylvie Vartan", "Katia Wyszkop – Nouvelle Vague", "Marie Cheminal – La Venue de l’avenir"]], ["Meilleurs costumes", ["Céline Guignard – La Condition", "Corinne Bruand – Dracula", "Jürgen Doering – La Femme la plus riche du monde", "Pascaline Chavanne – Nouvelle Vague", "Pierre‑Yves Gayraud – La Venue de l’avenir"]], ["Meilleurs effets visuels", ["Cédric Fayolle – Chien 51", "Rodolphe Chabrier, Benoît de Longlée – L’Homme qui rétrécit", "Lise Fischer – L’Inconnu de la Grande Arche", "Alain Carsoux – Nouvelle Vague"]], ["Meilleur film d’animation (long métrage)", ["Amélie et la métaphysique des tubes – Maïlys Vallade, Liane‑Cho Han", "ARCO – Ugo Bienvenu", "La Vie de château, mon enfance à Versailles – Clémence Madeleine‑Perdrillat, Nathaniel H’Limi"]], ["Meilleur film documentaire", ["À Bicyclette ! – Mathias Mlekuz", "Le Chant des Forêts – Vincent Munier", "Le Cinquième Plan de La Jetée – Dominique Cabrera", "Personne n’y comprend rien – Yannick Kergoat", "Put Your Soul On Your Hand And Walk – Sepideh Farsi"]], ["Meilleur premier film", ["ARCO – Ugo Bienvenu", "L’Épreuve du feu – Aurélien Peyre", "Nino – Pauline Loquès", "La Pampa – Antoine Chevrollier", "Partir un jour – Amélie Bonnin"]], ["Meilleur film étranger", ["L’Agent secret – Kleber Mendonça Filho", "Black Dog – Guan Hu", "Sirāt – Oliver Laxe", "Une bataille après l’autre – Paul Thomas Anderson", "Valeur sentimentale – Joachim Trier"]], ["Meilleur court métrage d’animation", ["Les Belles Cicatrices – Raphaël Jouzeau", "Dieu est timide – Jocelyn Charles", "Fille de l’eau – Sandra Desmazières"]], ["Meilleur court métrage documentaire", ["Au bain des dames – Margaux Fournier", "Car Wash – Laïs Decaster", "Ni Dieu ni Père – Paul Kermarec"]], ["Meilleur court métrage de fiction", ["Big Boys Don’t Cry – Arnaud Delmarle", "Deux personnes échangeant de la salive – Natalie Musteata, Alexandre Singh", "Mort d’un acteur – Ambroise Rateau", "Wonderwall – Róisín Burns"]]];
 const KEY = 'cesars2026_' + NAME + '_choices';
 
-function buildSelect(sel, arr){
+function buildSelect(sel, arr){{
   sel.innerHTML='';
   const base=['— Sélectionner —', ...arr, 'Autre (saisie libre)…'];
-  base.forEach(v=>{ const o=document.createElement('option'); o.value=v; o.textContent=v; sel.appendChild(o); });
-}
+  base.forEach(v=>{{ const o=document.createElement('option'); o.value=v; o.textContent=v; sel.appendChild(o); }});
+}}
 
-function computePoints(real, coeur, win){
+// RÈGLE B
+function computePoints(coeur, real, win){{
   if(!win || win==='— Sélectionner —' || win==='— Non défini —') return 0;
-  let pts=0; if(real && real===win){ pts+=2; if(coeur && coeur===real) pts+=1; }
-  return pts;
-}
+  const equalAll = (coeur && real && coeur===real && real===win);
+  if(equalAll) return 2;                 // coeur = real = gagnant => 2
+  if(coeur && coeur===win) return 3;     // coeur = gagnant => 3
+  if(real && real===win) return 2;       // réaliste = gagnant => 2
+  return 0;
+}}
 
-function recalcTotal(root){
-  let total=0; root.querySelectorAll('[data-pts]').forEach(x=>{ total+=Number(x.dataset.value||0); });
+function loadSaved(){{ try{{return JSON.parse(localStorage.getItem(KEY)||'{{}}');}}catch(e){{return {{}}}} }}
+function saveCategory(root, title){{
+  const coeur = root.querySelector('.coeur').value;
+  const real  = root.querySelector('.real').value;
+  const win   = root.querySelector('.win').value;
+  const pts   = computePoints(coeur, real, win);
+  const all = loadSaved();
+  all[title] = {{ coeur, realiste: real, gagnant: win, pts }};
+  localStorage.setItem(KEY, JSON.stringify(all));
+  const badge = root.querySelector('[data-pts]');
+  badge.dataset.value = pts;
+  badge.textContent = pts + ' pt' + (pts>1?'s':'');
+  recalcTotal();
+}}
+function clearCategory(root, title){{
+  const all = loadSaved();
+  delete all[title];
+  localStorage.setItem(KEY, JSON.stringify(all));
+  root.querySelector('.coeur').value='— Sélectionner —';
+  root.querySelector('.real').value='— Sélectionner —';
+  // gagnant : on met par défaut Non défini
+  const winSel = root.querySelector('.win');
+  if(winSel.querySelector('option') && winSel.querySelector('option').value==='— Non défini —'){{
+    winSel.value='— Non défini —';
+  }} else {{
+    winSel.selectedIndex = 0;
+  }}
+  const badge = root.querySelector('[data-pts]');
+  badge.dataset.value = 0; badge.textContent = '0 pt';
+  recalcTotal();
+}}
+function recalcTotal(){{
+  let total=0; document.querySelectorAll('[data-pts]').forEach(x=>{{ total+=Number(x.dataset.value||0); }});
   document.getElementById('total').textContent = 'Total : ' + total + ' pts';
-}
+}}
 
-function loadSaved(){ try{return JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){return{}} }
-function saveAll(root){
-  const out={};
-  root.querySelectorAll('.cat').forEach(cat=>{
-    const title=cat.querySelector('h3').textContent;
-    const coeur=cat.querySelector('.coeur').value;
-    const real =cat.querySelector('.real').value;
-    const win  =cat.querySelector('.win').value;
-    out[title]={coeur,realiste:real, gagnant: win};
-  });
-  localStorage.setItem(KEY, JSON.stringify(out));
-}
+window.addEventListener('DOMContentLoaded',()=>{{
+  const root = document.getElementById('cats');
+  const tpl  = document.getElementById('tpl');
+  const saved= loadSaved();
 
-window.addEventListener('DOMContentLoaded',()=>{
-  const root=document.getElementById('cats');
-  const tpl=document.getElementById('tpl');
-  const saved=loadSaved();
-  CATS.forEach(cat=>{
-    const node=tpl.content.cloneNode(true);
-    const title=cat[0], options=cat[1];
-    node.querySelector('h3').textContent=title;
-    const coeur=node.querySelector('.coeur');
-    const real =node.querySelector('.real');
-    const win  =node.querySelector('.win');
+  CATS.forEach(cat=>{{
+    const node = tpl.content.cloneNode(true);
+    const title = cat[0], options = cat[1];
+    node.querySelector('h3').textContent = title;
+
+    const coeur = node.querySelector('.coeur');
+    const real  = node.querySelector('.real');
+    const win   = node.querySelector('.win');
 
     buildSelect(coeur, options);
     buildSelect(real , options);
     win.innerHTML='';
-    const winners=['— Non défini —', ...options];
-    winners.forEach(v=>{ const o=document.createElement('option'); o.value=v; o.textContent=v; win.appendChild(o); });
+    const winners = ['— Non défini —', ...options];
+    winners.forEach(v=>{{ const o=document.createElement('option'); o.value=v; o.textContent=v; win.appendChild(o); }});
 
-    if(saved[title]){
-      if(saved[title].coeur) coeur.value=saved[title].coeur;
-      if(saved[title].realiste) real.value=saved[title].realiste;
-      if(saved[title].gagnant) win.value=saved[title].gagnant;
-    }
+    // pré-remplir et points init
+    const badge = node.querySelector('[data-pts]');
+    if(saved[title]){{
+      if(saved[title].coeur)    coeur.value = saved[title].coeur;
+      if(saved[title].realiste) real.value  = saved[title].realiste;
+      if(saved[title].gagnant)  win.value   = saved[title].gagnant;
+      const pts = Number(saved[title].pts||0);
+      badge.dataset.value = pts; badge.textContent = pts + ' pt' + (pts>1?'s':'');
+    }} else {{
+      badge.dataset.value = 0; badge.textContent = '0 pt';
+    }}
 
-    function update(){
-      const pts = computePoints(real.value, coeur.value, win.value);
-      const pdiv=node.querySelector('[data-pts]');
-      pdiv.dataset.value=pts; pdiv.textContent = (pts||0) + ' pt' + (pts>1?'s':'');
-      recalcTotal(root);
-    }
-
-    ;[coeur,real,win].forEach(s=>s.addEventListener('change',update));
-    update();
+    // boutons par catégorie
+    node.querySelector('.save').addEventListener('click', ()=> saveCategory(node, title));
+    node.querySelector('.erase').addEventListener('click', ()=> clearCategory(node, title));
 
     root.appendChild(node);
-  });
+  }});
 
-  document.getElementById('saveBtn').addEventListener('click',()=>{ saveAll(root); alert('Enregistré !'); });
-  document.getElementById('clearBtn').addEventListener('click',()=>{ if(!confirm('Effacer toutes les sélections ?')) return; localStorage.removeItem(KEY); location.reload(); });
-  document.getElementById('printBtn').addEventListener('click',()=>{ window.print(); });
-});
+  recalcTotal();
+}});
 </script>
 </body>
 </html>
