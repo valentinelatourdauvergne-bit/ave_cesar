@@ -1,0 +1,18 @@
+
+<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Score marion</title></head><body>
+<h1>Score marion</h1>
+<div>
+<label>Meilleur film</label>
+<input type='number' min='0' max='2' value='0' class='score'>
+</div>
+<div>
+<label>Meilleure réalisation</label>
+<input type='number' min='0' max='2' value='0' class='score'>
+</div>
+<h2 id='total'>Total : 0 pts</h2>
+<script>
+const inputs=document.querySelectorAll('.score');
+function update(){let t=0;inputs.forEach(i=>t+=Number(i.value));document.getElementById('total').textContent='Total : '+t+' pts';}
+inputs.forEach(i=>i.addEventListener('input',update));
+</script>
+</body></html>
