@@ -1,12 +1,147 @@
 
-<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Participants</title></head><body>
-<h1>Participants</h1>
-<ul>
-<li><a href='participants/fabio.html'>fabio</a></li>
-<li><a href='participants/marion.html'>marion</a></li>
-<li><a href='participants/alban.html'>alban</a></li>
-<li><a href='participants/paul.html'>paul</a></li>
-<li><a href='participants/val.html'>val</a></li>
-<li><a href='participants/lucile.html'>lucile</a></li>
-<li><a href='participants/oumeya.html'>oumeya</a></li>
-</ul></body></html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Césars 2026 — Pronostics</title>
+  <style>
+    :root{--bg:#0f172a;--panel:#0b1220;--border:#1f2937;--text:#e5e7eb;--muted:#94a3b8;--accent:#22c55e}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:radial-gradient(1200px 800px at 10% 10%,#0b1220,#0f172a);color:var(--text)}
+    .container{max-width:980px;margin:0 auto;padding:24px}
+    a{color:#a7f3d0;text-decoration:none}
+    .card{background:linear-gradient(180deg,#0f172acc,#0b1220cc);border:1px solid var(--border);border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.3);padding:18px}
+    ul{list-style:none;padding:0}
+    li{margin:8px 0}
+    select,input[type=text]{width:100%;background:#0b1220;color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px}
+    label{display:block;margin-bottom:6px;font-weight:600}
+    .grid{display:grid;gap:14px;grid-template-columns:1fr}
+    @media(min-width:700px){.grid{grid-template-columns:1fr 1fr}}
+    .footer{margin-top:18px;color:var(--muted);font-size:12px}
+    .btn{cursor:pointer;border:1px solid var(--border);color:#fff;background:#111827;padding:10px 14px;border-radius:10px;font-weight:600;display:inline-block}
+    .btn-primary{background:linear-gradient(90deg,#22c55e,#16a34a);border:none}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="view-list" class="card" style="display:none">
+      <h1 style="margin:0 0 8px">Participants</h1>
+      <p>Choisir un nom pour ouvrir sa page de pronostics&nbsp;:</p>
+      <ul id="plist"></ul>
+      <div class="footer">Astuce&nbsp;: ajoute un participant en tapant son nom directement dans l’URL&nbsp;: <code>?participant=prenom</code> (ex&nbsp;: <code>?participant=val</code>).</div>
+    </div>
+
+    <div id="view-participant" class="card" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <h1 id="ptitle" style="margin:0">Pronostics</h1>
+        <a class="btn" href="./">← Liste</a>
+      </div>
+      <p id="psub" style="color:var(--muted);margin-top:6px"></p>
+
+      <div id="cats"></div>
+      <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+        <button id="saveBtn" class="btn btn-primary">💾 Enregistrer</button>
+        <button id="clearBtn" class="btn">🗑️ Effacer mes choix</button>
+        <button id="exportBtn" class="btn">⬇️ Exporter (JSON)</button>
+      </div>
+    </div>
+  </div>
+
+  <template id="cat-template">
+    <div style="border-top:1px dashed var(--border);padding-top:12px;margin-top:10px">
+      <h3 style="margin:0 0 6px"></h3>
+      <div class="grid">
+        <div>
+          <label>Choix du cœur</label>
+          <select class="coeur"></select>
+        </div>
+        <div>
+          <label>Choix réaliste</label>
+          <select class="realiste"></select>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    const PARTICIPANTS = ["fabio", "marion", "alban", "paul", "val", "lucile", "oumeya"];
+    const CATEGORIES = [["Meilleur film", ["L’Attachement – Carine Tardieu", "Dossier 137 – Dominik Moll", "Nouvelle Vague – Richard Linklater", "La Petite Dernière – Hafsia Herzi", "Un Simple Accident – Jafar Panahi"]], ["Meilleure réalisation", ["Carine Tardieu – L’Attachement", "Dominik Moll – Dossier 137", "Stéphane Demoustier – L’Inconnu de la Grande Arche", "Richard Linklater – Nouvelle Vague", "Hafsia Herzi – La Petite Dernière"]], ["Meilleure actrice", ["Leïla Bekhti – Ma mère, Dieu et Sylvie Vartan", "Valeria Bruni Tedeschi – L’Attachement", "Léa Drucker – Dossier 137", "Isabelle Huppert – La Femme la plus riche du monde", "Mélanie Thierry – La Chambre de Mariana"]], ["Meilleur acteur", ["Claes Bang – L’Inconnu de la Grande Arche", "Bastien Bouillon – Partir un jour", "Laurent Lafitte – La Femme la plus riche du monde", "Pio Marmaï – L’Attachement", "Benjamin Voisin – L’Étranger"]], ["Meilleure actrice dans un second rôle", ["Jeanne Balibar – Nino", "Dominique Blanc – Partir un jour", "Marina Foïs – La Femme la plus riche du monde", "Ji‑Min Park – La Petite Dernière", "Vimala Pons – L’Attachement"]], ["Meilleur acteur dans un second rôle", ["Swann Arlaud – L’Inconnu de la Grande Arche", "Xavier Dolan – L’Inconnu de la Grande Arche", "Michel Fau – L’Inconnu de la Grande Arche", "Pierre Lottin – L’Étranger", "Raphaël Personnaz – La Femme la plus riche du monde"]], ["Meilleur espoir féminin", ["Manon Clavel – Kika", "Suzanne Lindon – La Venue de l’avenir", "Nadia Melliti – La Petite Dernière", "Camille Rutherford – Jane Austen a gâché ma vie", "Anja Verderosa – L’Épreuve du feu"]], ["Meilleur espoir masculin", ["Idir Azougli – Météors", "Sayyid El Alami – La Pampa", "Félix Lefebvre – L’Épreuve du feu", "Guillaume Marbeck – Nouvelle Vague", "Théodore Pellerin – Nino"]], ["Meilleur scénario original", ["Dominik Moll, Gilles Marchand – Dossier 137", "Pauline Loquès – Nino", "Holly Gent, Vince Palmo, Michèle Halberstadt, Laetitia Masson – Nouvelle Vague", "Franck Dubosc, Sarah Kaminsky – Un ours dans le Jura", "Jafar Panahi – Un Simple Accident"]], ["Meilleure adaptation", ["Carine Tardieu, Raphaële Moussafir, Agnès Feuvre – L’Attachement", "Stéphane Demoustier – L’Inconnu de la Grande Arche", "Hafsia Herzi – La Petite Dernière"]], ["Meilleure musique originale", ["Arnaud Toulon – ARCO", "Olivier Marguerit – Dossier 137", "Fatima Al Qadiri – L’Étranger", "Alex Beaupain – La Femme la plus riche du monde", "Amine Bouhafa – La Petite Dernière"]], ["Meilleur son", ["Nicolas Becker, Andrea Ferrara, Jon Goc, Damien Lazzerini – ARCO", "Romain Cadilhac, Marc Namblard, Olivier Touche, Olivier Goinard – Le Chant des Forêts", "François Maurel, Rym Debbarh‑Mounir, Nathalie Vidal – Dossier 137", "Jean Minondo, Serge Rouquairol, Christophe Vingtrinier – Nouvelle Vague", "Rémi Chanaud, Jeanne Delplancq, Fanny Martin, Niels Barletta – Partir un jour"]], ["Meilleure photographie", ["Elin Kirschfink – L’Attachement", "Patrick Ghiringhelli – Dossier 137", "Marine Atlan – L’Engloutie", "Manu Dacosse – L’Étranger", "David Chambille – Nouvelle Vague"]], ["Meilleur montage", ["Stan Collet – 13 jours, 13 nuits", "Christel Dewynter – L’Attachement", "Laurent Rouan – Dossier 137", "Catherine Schwartz – Nouvelle Vague", "Géraldine Mangenot – La Petite Dernière"]], ["Meilleurs décors", ["Jean‑Philippe Moreaux – Chien 51", "Catherine Cosme – L’Inconnu de la Grande Arche", "Riton Dupire‑Clément – Ma mère, Dieu et Sylvie Vartan", "Katia Wyszkop – Nouvelle Vague", "Marie Cheminal – La Venue de l’avenir"]], ["Meilleurs costumes", ["Céline Guignard – La Condition", "Corinne Bruand – Dracula", "Jürgen Doering – La Femme la plus riche du monde", "Pascaline Chavanne – Nouvelle Vague", "Pierre‑Yves Gayraud – La Venue de l’avenir"]], ["Meilleurs effets visuels", ["Cédric Fayolle – Chien 51", "Rodolphe Chabrier, Benoît de Longlée – L’Homme qui rétrécit", "Lise Fischer – L’Inconnu de la Grande Arche", "Alain Carsoux – Nouvelle Vague"]], ["Meilleur film d’animation (long métrage)", ["Amélie et la métaphysique des tubes – Maïlys Vallade, Liane‑Cho Han", "ARCO – Ugo Bienvenu", "La Vie de château, mon enfance à Versailles – Clémence Madeleine‑Perdrillat, Nathaniel H’Limi"]], ["Meilleur film documentaire", ["À Bicyclette ! – Mathias Mlekuz", "Le Chant des Forêts – Vincent Munier", "Le Cinquième Plan de La Jetée – Dominique Cabrera", "Personne n’y comprend rien – Yannick Kergoat", "Put Your Soul On Your Hand And Walk – Sepideh Farsi"]], ["Meilleur premier film", ["ARCO – Ugo Bienvenu", "L’Épreuve du feu – Aurélien Peyre", "Nino – Pauline Loquès", "La Pampa – Antoine Chevrollier", "Partir un jour – Amélie Bonnin"]], ["Meilleur film étranger", ["L’Agent secret – Kleber Mendonça Filho", "Black Dog – Guan Hu", "Sirāt – Oliver Laxe", "Une bataille après l’autre – Paul Thomas Anderson", "Valeur sentimentale – Joachim Trier"]], ["Meilleur court métrage d’animation", ["Les Belles Cicatrices – Raphaël Jouzeau", "Dieu est timide – Jocelyn Charles", "Fille de l’eau – Sandra Desmazières"]], ["Meilleur court métrage documentaire", ["Au bain des dames – Margaux Fournier", "Car Wash – Laïs Decaster", "Ni Dieu ni Père – Paul Kermarec"]], ["Meilleur court métrage de fiction", ["Big Boys Don’t Cry – Arnaud Delmarle", "Deux personnes échangeant de la salive – Natalie Musteata, Alexandre Singh", "Mort d’un acteur – Ambroise Rateau", "Wonderwall – Róisín Burns"]]];
+
+    function qs(k){ return new URLSearchParams(location.search).get(k)||''; }
+    const p = (qs('participant')||'').trim().toLowerCase();
+
+    const listView = document.getElementById('view-list');
+    const partView = document.getElementById('view-participant');
+
+    if(!p){
+      // Liste des participants
+      listView.style.display='block';
+      const ul = document.getElementById('plist');
+      ul.innerHTML = PARTICIPANTS.map(x=>`<li>• <a href='?participant=${x}'>${x}</a></li>`).join('');
+    } else {
+      // Vue participant
+      partView.style.display='block';
+      document.getElementById('ptitle').textContent = `Pronostics — ${p}`;
+      document.getElementById('psub').textContent = `Saisie pour ${p} (menus déroulants)`;
+
+      const root = document.getElementById('cats');
+      const tpl = document.getElementById('cat-template');
+
+      function buildSelect(sel, options){
+        sel.innerHTML = '';
+        const base = ['— Sélectionner —', ...options, 'Autre (saisie libre)…'];
+        base.forEach(v=>{ const o=document.createElement('option'); o.value=v; o.textContent=v; sel.appendChild(o); });
+      }
+
+      // Charger éventuels choix sauvegardés
+      const STOREKEY = `cesars2026_${p}`;
+      const saved = JSON.parse(localStorage.getItem(STOREKEY)||'{}');
+
+      CATEGORIES.forEach(cat=>{
+        const node = tpl.content.cloneNode(true);
+        const title = cat[0];
+        const nominees = cat[1];
+        node.querySelector('h3').textContent = title;
+        const coeur = node.querySelector('.coeur');
+        const real = node.querySelector('.realiste');
+        buildSelect(coeur, nominees);
+        buildSelect(real, nominees);
+        // pré-remplir
+        if(saved[title]){
+          if(saved[title].coeur) coeur.value = saved[title].coeur;
+          if(saved[title].realiste) real.value = saved[title].realiste;
+        }
+        root.appendChild(node);
+      });
+
+      document.getElementById('saveBtn').addEventListener('click', ()=>{
+        const blocks = root.querySelectorAll('[style*="border-top"]');
+        const out = {};
+        blocks.forEach(b=>{
+          const title = b.querySelector('h3').textContent;
+          const v1 = b.querySelector('.coeur').value;
+          const v2 = b.querySelector('.realiste').value;
+          out[title] = { coeur: v1==='— Sélectionner —'?'':v1, realiste: v2==='— Sélectionner —'?'':v2 };
+        });
+        localStorage.setItem(STOREKEY, JSON.stringify(out));
+        alert('Enregistré !');
+      });
+
+      document.getElementById('clearBtn').addEventListener('click', ()=>{
+        if(!confirm(`Effacer toutes les sélections pour ${p} ?`)) return;
+        localStorage.removeItem(STOREKEY);
+        location.reload();
+      });
+
+      document.getElementById('exportBtn').addEventListener('click', ()=>{
+        const data = localStorage.getItem(STOREKEY)||'{}';
+        const a=document.createElement('a');
+        a.href=URL.createObjectURL(new Blob([data],{type:'application/json'}));
+        a.download=`pronostics_${p}.json`;
+        a.click();
+        setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+      });
+    }
+  </script>
+</body>
+</html>
